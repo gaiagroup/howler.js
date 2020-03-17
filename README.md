@@ -5,6 +5,8 @@
 
 Additional information, live demos and a user showcase are available at [howlerjs.com](https://howlerjs.com).
 
+Follow on Twitter for howler.js and development-related discussion: [@GoldFireStudios](https://twitter.com/goldfirestudios).
+
 ### Features
 * Single API for all audio needs
 * Defaults to Web Audio API and falls back to HTML5 Audio
@@ -50,7 +52,7 @@ Tested in the following browsers/versions:
   * [Options](#options-1)
   * [Methods](#methods-1)
   * [Global Methods](#global-methods-1)
-* [Mobile Playback](#mobile-playback)
+* [Mobile Playback](#mobilechrome-playback)
 * [Dolby Audio Playback](#dolby-audio-playback)
 * [Facebook Instant Games](#facebook-instant-games)
 * [Format Recommendations](#format-recommendations)
@@ -290,12 +292,12 @@ Get/set whether to loop the sound or group. This method can optionally take 0, 1
 #### state()
 Check the load status of the `Howl`, returns a `unloaded`, `loading` or `loaded`.
 
-#### playing(id)
+#### playing([id])
 Check if a sound is currently playing or not, returns a `Boolean`. If no sound ID is passed, check if any sound in the `Howl` group is playing.
-* **id**: `Number` The sound ID to check.
+* **id**: `Number` `optional` The sound ID to check.
 
 #### duration([id])
-Get the duration of the audio source. Will return 0 until after the `load` event fires.
+Get the duration of the audio source (in seconds). Will return 0 until after the `load` event fires.
 * **id**: `Number` `optional` The sound ID to check. Passing an ID will return the duration of the sprite being played on this instance; otherwise, the full source duration is returned.
 
 #### on(event, function, [id])
@@ -328,8 +330,10 @@ Unload and destroy a Howl object. This will immediately stop all sounds attached
 `true` if the Web Audio API is available.
 #### noAudio `Boolean`
 `true` if no audio is available.
-#### mobileAutoEnable `Boolean` `true`
-Automatically attempts to enable audio on mobile (iOS, Android, etc) devices.
+#### autoUnlock `Boolean` `true`
+Automatically attempts to enable audio on mobile (iOS, Android, etc) devices and desktop Chrome/Safari.
+#### html5PoolSize `Number` `10`
+Each HTML5 Audio object must be unlocked individually, so we keep a global pool of unlocked nodes to share between all `Howl` instances. This pool gets created on the first user interaction and is set to the size of this property.
 #### autoSuspend `Boolean` `true`
 Automatically suspends the Web Audio AudioContext after 30 seconds of inactivity to decrease processing and energy usage. Automatically resumes upon new playback. Set this property to `false` to disable this behavior.
 #### ctx `Boolean` *`Web Audio Only`*
@@ -431,10 +435,10 @@ Get/set the direction the listener is pointing in the 3D cartesian space. A fron
 
 
 ### Mobile/Chrome Playback
-By default, audio on mobile browsers and Chrome is locked until a sound is played within a user interaction, and then it plays normally the rest of the page session ([Apple documentation](https://developer.apple.com/library/safari/documentation/audiovideo/conceptual/using_html5_audio_video/PlayingandSynthesizingSounds/PlayingandSynthesizingSounds.html)). The default behavior of howler.js is to attempt to silently unlock audio playback by playing an empty buffer on the first `touchend` event. This behavior can be disabled by calling:
+By default, audio on mobile browsers and Chrome/Safari is locked until a sound is played within a user interaction, and then it plays normally the rest of the page session ([Apple documentation](https://developer.apple.com/library/safari/documentation/audiovideo/conceptual/using_html5_audio_video/PlayingandSynthesizingSounds/PlayingandSynthesizingSounds.html)). The default behavior of howler.js is to attempt to silently unlock audio playback by playing an empty buffer on the first `touchend` event. This behavior can be disabled by calling:
 
 ```javascript
-Howler.mobileAutoEnable = false;
+Howler.autoUnlock = false;
 ```
 
 If you try to play audio automatically on page load, you can listen to a `playerror` event and then wait for the `unlock` event to try and play the audio again:
@@ -479,6 +483,6 @@ ffmpeg -i sound1.wav -dash 1 sound1.webm
 
 ### License
 
-Copyright (c) 2013-2018 [James Simpson](https://twitter.com/GoldFireStudios) and [GoldFire Studios, Inc.](http://goldfirestudios.com)
+Copyright (c) 2013-2019 [James Simpson](https://twitter.com/GoldFireStudios) and [GoldFire Studios, Inc.](http://goldfirestudios.com)
 
 Released under the [MIT License](https://github.com/goldfire/howler.js/blob/master/LICENSE.md).
